@@ -270,7 +270,7 @@ static void set_touchkey_debug(char value)
 static int i2c_touchkey_read(u8 reg, u8 *val, unsigned int len)
 {
 	int err = 0;
-	int retry = 2;
+	int retry = 10;
 	struct i2c_msg msg[1];
 
 	if ((touchkey_driver == NULL)|| !(touchkey_enable == 1) || !touchkey_probe ) {
@@ -303,7 +303,9 @@ static int i2c_touchkey_write(u8 *val, unsigned int len)
 	int retry = 2;
 
 	if ((touchkey_driver == NULL) || !(touchkey_enable == 1) || !touchkey_probe  ) {
-		printk(KERN_ERR "[TouchKey] touchkey is not enabled. %d\n", __LINE__);
+#if 1 /* creams */
+		printk(KERN_ERR "[TouchKey] touchkey is not enabled.\n");
+#endif
 		return -ENODEV;
 	}
 
@@ -349,7 +351,9 @@ static int i2c_touchkey_write(u8 *val, unsigned int len)
 		msg->len = len;
 		msg->buf = data;
 		err = i2c_transfer(touchkey_driver->client->adapter, msg, 1);
-		/*printk("write value %d to address %d\n",*val, msg->addr);*/
+#if 1 /* creams */
+		printk("write value %d to address %d\n",*val, msg->addr);
+#endif
 		if (err >= 0) {
 
 			return 0;
@@ -816,6 +820,7 @@ void touchkey_work_func(struct work_struct *p)
 #endif
 	int ret;
 	int retry = 10;
+
 
 #if 0
 	if (gpio_get_value(_3_GPIO_TOUCH_INT)) {
@@ -1547,6 +1552,7 @@ static int i2c_touchkey_probe(struct i2c_client *client,
 	wake_lock_init(&bln_wake_lock, WAKE_LOCK_SUSPEND, "bln_wake_lock");
 #endif
 
+
 	return 0;
 }
 
@@ -1786,6 +1792,7 @@ static ssize_t touchkey_enable_disable(struct device *dev,
 				       struct device_attribute *attr,
 				       const char *buf, size_t size)
 {
+
 	return size;
 }
 
@@ -2156,6 +2163,7 @@ static DEVICE_ATTR(touchkey_threshold, S_IRUGO, touchkey_threshold_show, NULL);
 static DEVICE_ATTR(autocal_enable, S_IRUGO | S_IWUSR | S_IWGRP, NULL, autocalibration_enable);
 static DEVICE_ATTR(autocal_stat, S_IRUGO | S_IWUSR | S_IWGRP, autocalibration_status, NULL);
 #endif /* CONFIG_TARGET_LOCALE_NA */
+
 
 static int __init touchkey_init(void)
 {
