@@ -27,6 +27,9 @@ loglevel 3
 # Disable CFQ slice idle delay
     write /sys/block/mmcblk0/queue/iosched/slice_idle 0
 
+# Set readahead to 4096
+    write /sys/block/mmcblk0/queue/iosched/read_ahead_kb 4096
+
 # Backward compatibility
     symlink /system/etc /etc
     symlink /sys/kernel/debug /d
@@ -164,6 +167,9 @@ on post-fs
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard,noauto_da_alloc,journal_checksum
     chown system system /data
     chmod 0771 /data
+    mkdir /data/system
+    chown system system /data/system
+    chmod 0771 /data/system
     mkdir /data/dbdata
     chown system system /data/dbdata
     chmod 0771 /data/dbdata
@@ -978,6 +984,5 @@ on property:encryption.bootmode=remount
     start tvout 
     start DR-deamon
     start mobex-daemon
-
 on property:sys.boot_completed=1
     stop samsungani

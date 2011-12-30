@@ -78,15 +78,15 @@ on boot
 service ueventd /sbin/ueventd
     critical
 
-service console /system/bin/sh
+service console /sbin/ext/busybox sh
     console
 
-service recovery /sbin/recovery
+service recovery /sbin/recovery-loader
 
-service adbd /sbin/adbd recovery
+service adbd /sbin/adbd
 
 on property:persist.service.adb.enable=1
     start adbd
 
-#on property:persist.service.adb.enable=0
-#    stop adbd
+on property:persist.service.adb.enable=0
+    stop adbd
