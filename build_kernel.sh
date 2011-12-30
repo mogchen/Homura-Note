@@ -9,7 +9,7 @@ TOOLCHAIN="$TOP_DIR/arm-2011.03/bin/arm-none-eabi-"
 ROOTFS_PATH="$TOP_DIR/initramfs"
 
 KERNEL_NAME="Homura-Note"
-CONFIG_FILE="$KERNEL_PATH/arch/arm/configs/Homura_defconfig"
+CONFIG_FILE="$KERNEL_PATH/arch/arm/configs/Homura_Note_defconfig"
 
 export LOCALVERSION="-$KERNEL_NAME"
 export KBUILD_BUILD_VERSION="Note1"
