@@ -8,14 +8,16 @@ on init
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
 
-    symlink /system/etc /etc
+    # for clockworkmod
+    symlink /misc /etc
 
-    mkdir /sdcard
+# create mountpoints
+    mkdir /sdcard 0000 system system
+    mkdir /emmc 0000 system system
     mkdir /preload
     mkdir /system
-    mkdir /system2
-    mkdir /data
-    mkdir /cache
+    mkdir /data 0771 system system
+    mkdir /cache 0770 system cache
     mkdir /efs
     mkdir /tmp
     mkdir /dbdata
@@ -31,18 +33,22 @@ on early-fs
     insmod /lib/modules/rfs_glue.ko
     insmod /lib/modules/rfs_fat.ko
 
+	# logcat -kodos
+	insmod /lib/modules/logger.ko
+
     # parameter block
     mkdir /mnt/.lfs 0755 root root
-
+    insmod /lib/modules/j4fs.ko
+    mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
 
 
 on fs
     mount tmpfs tmpfs /tmp mode=0755    
-    mount ext4 /dev/block/mmcblk0p9 /system wait
+    mount ext4 /dev/block/mmcblk0p9 /system wait rw
+    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
     mkdir /efs
-    #mount rfs /dev/block/mmcblk0p1 /efs nosuid nodev check=no
     mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
     chown radio system /efs
     chmod 0771 /efs
@@ -64,8 +70,8 @@ on post-fs
     write /proc/sys/kernel/sched_compat_yield 1
     write /proc/sys/kernel/sched_child_runs_first 0
 
-    insmod /lib/modules/j4fs.ko
-    mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
+    # let recovery handle mounting /system
+    # umount /system
 
 on boot
 
@@ -78,15 +84,15 @@ on boot
 service ueventd /sbin/ueventd
     critical
 
-service console /sbin/ext/busybox sh
+service console /sbin/sh
     console
 
-service recovery /sbin/recovery-loader
+service recovery /sbin/recovery
 
-service adbd /sbin/adbd
+service adbd /sbin/adbd recovery
 
 on property:persist.service.adb.enable=1
     start adbd
 
-on property:persist.service.adb.enable=0
-    stop adbd
+#on property:persist.service.adb.enable=0
+#    stop adbd
