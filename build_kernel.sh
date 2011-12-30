@@ -5,7 +5,7 @@ TOP_DIR=$PWD
 KERNEL_PATH=$TOP_DIR/kernel
 
 # TODO: Set toolchain and root filesystem path
-TOOLCHAIN="$TOP_DIR/arm-2011.03/bin/arm-none-eabi-"
+TOOLCHAIN="$TOP_DIR/arm-2009q3/bin/arm-none-eabi-"
 ROOTFS_PATH="$TOP_DIR/initramfs"
 
 KERNEL_NAME="Homura-Note"
