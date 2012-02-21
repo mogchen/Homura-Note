@@ -1147,7 +1147,7 @@ void tsp_register_callback(void *function)
 
 void tsp_read_ta_status(bool *ta_status)
 {
-	*ta_status = is_cable_attached;
+	*((bool*)ta_status) = is_cable_attached;
 }
 
 static int max8997_muic_charger_cb(cable_type_t cable_type)
