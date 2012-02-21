@@ -15,13 +15,6 @@ cat /vendor/files/CWMManager.apk > /system/app/CWMManager.apk
 chown 0.0 /system/app/CWMManager.apk
 chmod 644 /system/app/CWMManager.apk
 
-rm /system/app/TweakGS2.apk
-rm /data/dalvik-cache/*TweakGS2.apk*
-rm /data/app/net.sakuramilk.TweakGS2*.apk
-cat /vendor/files/TweakGS2.apk > /system/app/TweakGS2.apk
-chown 0.0 /system/app/TweakGS2.apk
-chmod 644 /system/app/TweakGS2.apk
-
 rm /system/app/AppWidgetPicker.apk
 rm /data/dalvik-cache/*AppWidgetPicker.apk*
 cat /vendor/files/AppWidgetPicker-1.2.3.apk > /system/app/AppWidgetPicker.apk
