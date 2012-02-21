@@ -27,9 +27,6 @@ loglevel 3
 # Disable CFQ slice idle delay
     write /sys/block/mmcblk0/queue/iosched/slice_idle 0
 
-# Set readahead to 4096
-    write /sys/block/mmcblk0/queue/iosched/read_ahead_kb 4096
-
 # Backward compatibility
     symlink /system/etc /etc
     symlink /sys/kernel/debug /d
@@ -133,17 +130,17 @@ on fs
     # mount yaffs2 mtd@cache /cache nosuid nodev
     # mount rfs /dev/block/stl9 /system check=no
     # mount rfs /dev/block/mmcblk0p9 /system check=no
-    mount ext4 /dev/block/mmcblk0p9 /system wait ro
+    mount ext4 /dev/block/mmcblk0p9 /system noatime wait ro nodelalloc
     # mount rfs /dev/block/stl10 /data nosuid nodev check=no
-	# mount rfs /dev/block/mmcblk0p7 /cache nosuid nodev check=no
-	exec check_filesystem /dev/block/mmcblk0p7 ext4
-    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait 
+    # mount rfs /dev/block/mmcblk0p7 /cache nosuid nodev check=no
+    exec check_filesystem /dev/block/mmcblk0p7 ext4
+    mount ext4 /dev/block/mmcblk0p7 /cache nosuid nodev noatime wait nodelalloc
 
     # SEC_DMCRYPT move mounting efs befor apply_disk_policy, and set group id to system
     mkdir /efs
     #mount rfs /dev/block/mmcblk0p1 /efs nosuid nodev check=no
     exec check_filesystem /dev/block/mmcblk0p1 ext4
-    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait 
+    mount ext4 /dev/block/mmcblk0p1 /efs nosuid nodev noatime wait nodelalloc
     chown radio system /efs
     chmod 0771 /efs
 
@@ -167,8 +164,8 @@ on post-fs
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait crypt discard,noauto_da_alloc,journal_checksum
     chown system system /data
     chmod 0771 /data
-    mkdir /data/system
-    chown system system /data/system
+    mkdir /data/system 
+    chown system system /data/system 
     chmod 0771 /data/system
     mkdir /data/dbdata
     chown system system /data/dbdata
@@ -292,10 +289,12 @@ on post-fs
     chown system system /data/app    
 
     # create log system
-    mkdir /data/log 0777 system system
+    mkdir /data/log 0775 system log
 
-    chmod 0777 /data/log
-    chmod 0777 /data/anr
+	chown system log /data/log
+    chmod 0775 /data/log
+	chown system log /data/anr
+    chmod 0775 /data/anr
     
     chmod 0662 /dev/log/radio
     chmod 0662 /dev/log/main
@@ -870,6 +869,18 @@ service rtc_log /system/bin/sh /system/bin/rtc_log.sh
      user system
      group system
 
+service post-init /sbin/post-init.sh
+    user root
+    oneshot
+
+service init_scripts /vendor/scripts/run_init_scripts.sh
+    user root
+    oneshot
+
+service run_parts /vendor/scripts/run_parts.sh
+    user root
+    oneshot
+	 
 on property:encryption.bootmode=remount
     exec check_encrypted_filesystem /data ext4
     stop mobex-daemon
@@ -877,8 +888,8 @@ on property:encryption.bootmode=remount
     stop tvout
     stop media
     stop immvibed
-    stop zygote
-    
+    stop zygote   
+
     #exec apply_system_policy /dev/block/mmcblk0p10 ext4
 
     mount ext4 /dev/block/mmcblk0p10 /data nosuid nodev noatime wait usedm discard,noauto_da_alloc
@@ -916,7 +927,7 @@ on property:encryption.bootmode=remount
     chmod 0640 /data/dontpanic/apanic_threads
 
     write /proc/apanic_console 1
-
+    
     # create basic filesystem structure
     mkdir /data/misc 01771 system misc
     mkdir /data/misc/bluetoothd 0770 bluetooth bluetooth
@@ -945,10 +956,12 @@ on property:encryption.bootmode=remount
     chown system system /data/app    
 
     # create log system
-    mkdir /data/log 0777 system system
+    mkdir /data/log 0775 system log
 
-    chmod 0777 /data/log
-    chmod 0777 /data/anr
+	chown system log /data/log
+    chmod 0775 /data/log
+	chown system log /data/anr
+    chmod 0775 /data/anr
     
     chmod 0662 /dev/log/radio
     chmod 0662 /dev/log/main

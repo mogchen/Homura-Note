@@ -38,8 +38,6 @@ on early-fs
 
     # parameter block
     mkdir /mnt/.lfs 0755 root root
-    insmod /lib/modules/j4fs.ko
-    mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
 
 
 on fs
@@ -70,6 +68,9 @@ on post-fs
     write /proc/sys/kernel/sched_compat_yield 1
     write /proc/sys/kernel/sched_child_runs_first 0
 
+    insmod /lib/modules/j4fs.ko
+    mount j4fs /dev/block/mmcblk0p4 /mnt/.lfs
+
     # let recovery handle mounting /system
     # umount /system
 
@@ -87,9 +88,11 @@ service ueventd /sbin/ueventd
 service console /sbin/sh
     console
 
-service recovery /sbin/recovery
+service recovery /sbin/recovery.sh
+    oneshot
 
 service adbd /sbin/adbd recovery
+    disabled
 
 on property:persist.service.adb.enable=1
     start adbd
