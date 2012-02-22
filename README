@@ -1,6 +1,5 @@
-Homura-Note rev1
-とりあえずBLNが動いたので放流。
-例によって全然検証してない。（不具合あっても知らん）
+Homura-Note rev2
+何故か悔しくなったのでTouch Recoveryにした。
 
 1.CPUFreq　Default(NO OC!)
 2.compatible with Tegrak Overclock (supports changing frequencies over 1000MHz)
@@ -9,7 +8,7 @@ https://market.android.com/details?id=com.tegrak.overclock.ultimate
 4.Ondemand/OndemandX/Interactive/InteractiveX/Smartass/SmartassV2/MinMax/UserSpace/
   Lazy/Intellidemand/Sakuractive/PowerSave/Conservative/SavagedZen/BrazilianWax/
   Performance/Scary/Lagfree/Wheatley/Lulzactive V2 Governors(Default)
-5.ClockWorkMod Recovery 5.0.2.6 r4
+5.ClockWorkMod Touch Recovery 5.8.1.5(New!)
 6.BFQ v3-r2(Default)/noop/deadline/CFQ/SIO/VR/Anticipatory I/O scheduler
 7.supports bootanimation
 8.Automatic rooting
@@ -31,7 +30,8 @@ https://market.android.com/details?id=org.projectvoodoo.louder
 21.ARM cpu topology definition
 22.AFTR ARM Idle Mode
 23.Faster USB Charger
-23.SLQB allocator
-24.Speedmod features
+24.SLQB allocator
+25.Speedmod features
 
-BLNだけにしとけばよかった。。。。
+ほむらちゃん画像が一個消えた。orz
+インストールドロイド君のほむらちゃん画像キボンヌ

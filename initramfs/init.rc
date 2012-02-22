@@ -121,7 +121,7 @@ loglevel 3
 # ko files for FM Radio
     insmod /lib/modules/Si4709_driver.ko
 
-# ko files for Voodoo Louder
+# ko files for Voodoo Audio Codecs
     insmod /lib/modules/mc1n2_voodoo.ko
 
 # ko files for CIFS
@@ -874,10 +874,6 @@ service rtc_log /system/bin/sh /system/bin/rtc_log.sh
      oneshot
      user system
      group system
-
-service post-init /sbin/post-init.sh
-    user root
-    oneshot
 
 service init_scripts /vendor/scripts/run_init_scripts.sh
     user root
