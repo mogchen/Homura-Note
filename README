@@ -1,5 +1,5 @@
-Homura-Note rev2
-何故か悔しくなったのでTouch Recoveryにした。
+Homura-Note rev3
+Recoveryを普通のに戻した。
 
 1.CPUFreq　Default(NO OC!)
 2.compatible with Tegrak Overclock (supports changing frequencies over 1000MHz)
@@ -33,5 +33,4 @@ https://market.android.com/details?id=org.projectvoodoo.louder
 24.SLQB allocator
 25.Speedmod features
 
-ほむらちゃん画像が一個消えた。orz
-インストールドロイド君のほむらちゃん画像キボンヌ
+emmcとSDCARDが逆になってたのでfix
