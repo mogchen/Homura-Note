@@ -18,12 +18,23 @@
 */
 #ifdef CONFIG_S5PV310_HI_ARMCLK_THAN_1_2GHZ
 enum cpufreq_level_request{
-	CPU_L0,	/* 1.4GHz */
-	CPU_L1,	/* 1.2GHz */
-	CPU_L2,	/* 1GHz */
-	CPU_L3,	/* 800MHz */
-	CPU_L4,	/* 500MHz */
-	CPU_L5,	/* 200MHz */
+	CPU_L0,	/* 1.6GHz */
+	CPU_L1,	/* 1.5GHz */
+	CPU_L2,	/* 1.4GHz */
+	CPU_L3,	/* 1.3GHz */
+	CPU_L4,	/* 1.2GHz */
+	CPU_L5,	/* 1.1GHz */
+	CPU_L6,	/* 1.0GHz */
+	CPU_L7,	/* 900MHz */
+	CPU_L8,	/* 800MHz */
+	CPU_L9,	/* 700MHz */
+	CPU_L10,	/* 600MHz */
+	CPU_L11,	/* 500MHz */
+	CPU_L12,	/* 400MHz */
+	CPU_L13,	/* 300MHz */
+	CPU_L14,	/* 200MHz */
+	CPU_L15,	/* 100MHz */
+	CPU_L16,	/* 50MHz */
 	CPU_LEVEL_END,
 };
 
@@ -55,6 +66,7 @@ enum cpufreq_lock_ID{
 	DVFS_LOCK_ID_TSP,	/*TSP*/
 	DVFS_LOCK_ID_PEN,	/*EPEN*/
 	DVFS_LOCK_ID_TMU,	/*TMU*/
+	DVFS_LOCK_ID_SND,	/* SND */
 	DVFS_LOCK_ID_END,
 };
 

@@ -52,6 +52,7 @@
 
 #include <plat/gpio-cfg.h>
 #include <mach/gpio.h>
+#include <mach/cpufreq.h>
 
 #ifdef CONFIG_SND_SOC_MIC_A1026
 
@@ -202,6 +203,7 @@ struct mc1n2_info_store mc1n2_info_store_tbl[] = {
 #define MC1N2_N_INFO_STORE (sizeof(mc1n2_info_store_tbl) / sizeof(struct mc1n2_info_store))
 
 int isVoiceSearch = 0;
+static int mc1n2_freq_lock = 0;
 
 static void mc1n2_set_codec_data(struct snd_soc_codec *codec)
 {
@@ -3588,8 +3590,11 @@ static int mc1n2_hwdep_ioctl_notify(struct snd_soc_codec *codec,
 		mc1n2->pdata->set_adc_power_contraints(1);
 		break;
 	case MCDRV_NOTIFY_MEDIA_PLAY_START:
+		if (mc1n2_freq_lock)
+			s5pv310_cpufreq_lock(DVFS_LOCK_ID_SND, CPU_L15); // CPU CLK lower lock 100MHz
 		break;
 	case MCDRV_NOTIFY_MEDIA_PLAY_STOP:
+		s5pv310_cpufreq_lock_free(DVFS_LOCK_ID_SND);
 		break;
 	case MCDRV_NOTIFY_FM_PLAY_START:
 		mc1n2_current_mode |= MC1N2_MODE_FM_ON;
