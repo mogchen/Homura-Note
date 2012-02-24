@@ -12,7 +12,7 @@ KERNEL_NAME="Homura-Note"
 CONFIG_FILE="$KERNEL_PATH/arch/arm/configs/Homura_Note_defconfig"
 
 export LOCALVERSION="-$KERNEL_NAME"
-export KBUILD_BUILD_VERSION="Note3"
+export KBUILD_BUILD_VERSION="Note4"
 export WHOAMI_MOD="Homura"
 export HOSTNAME_MOD="Akemi"
 

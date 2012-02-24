@@ -1,14 +1,15 @@
-Homura-Note rev3
-Recoveryを普通のに戻した。
+Homura-Note rev4
+やっぱりOC/UVしちゃった☆
 
-1.CPUFreq　Default(NO OC!)
+1.1.CPU scaling level is changed from 5 to 17
+(1600/1500/1400/1300/1200/1100/1000/900/800/700/600/500/400/300/200/100/50MHz)
 2.compatible with Tegrak Overclock (supports changing frequencies over 1000MHz)
 https://market.android.com/details?id=com.tegrak.overclock.ultimate
 3.supports CIFS
 4.Ondemand/OndemandX/Interactive/InteractiveX/Smartass/SmartassV2/MinMax/UserSpace/
   Lazy/Intellidemand/Sakuractive/PowerSave/Conservative/SavagedZen/BrazilianWax/
   Performance/Scary/Lagfree/Wheatley/Lulzactive V2 Governors(Default)
-5.ClockWorkMod Touch Recovery 5.8.1.5(New!)
+5.ClockWorkMod Recovery 5.0.2.6 r4
 6.BFQ v3-r2(Default)/noop/deadline/CFQ/SIO/VR/Anticipatory I/O scheduler
 7.supports bootanimation
 8.Automatic rooting
@@ -32,5 +33,6 @@ https://market.android.com/details?id=org.projectvoodoo.louder
 23.Faster USB Charger
 24.SLQB allocator
 25.Speedmod features
+26.800MHz Sleep Death Fix
+27.TweakGS2 Support!(一部）
 
-emmcとSDCARDが逆になってたのでfix
