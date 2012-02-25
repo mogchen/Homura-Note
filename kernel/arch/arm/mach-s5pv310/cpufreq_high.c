@@ -1065,7 +1065,20 @@ static int s5pv310_target(struct cpufreq_policy *policy,
 	}
 
 	if (!strncmp(policy->governor->name, "ondemand", CPUFREQ_NAME_LEN)
-	|| !strncmp(policy->governor->name, "conservative", CPUFREQ_NAME_LEN)) {
+	|| !strncmp(policy->governor->name, "conservative", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "brazilianwax", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "intellidemand", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "interactive", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "interactiveX", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "lagfree", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "lazy", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "lulzactive", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "minmax", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "sakuractive", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "Scary", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "smartass", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "smartassV2", CPUFREQ_NAME_LEN)
+	|| !strncmp(policy->governor->name, "wheatley", CPUFREQ_NAME_LEN)) {
 		check_gov = 1;
 		if (relation & ENABLE_FURTHER_CPUFREQ)
 			s5pv310_dvs_locking = 0;
