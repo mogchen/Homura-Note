@@ -3835,7 +3835,7 @@ static int mc1n2_hwdep_ioctl_notify(struct snd_soc_codec *codec,
 		break;
 	case MCDRV_NOTIFY_MEDIA_PLAY_START:
 		if (mc1n2_freq_lock)
-			s5pv310_cpufreq_lock(DVFS_LOCK_ID_SND, CPU_L15); // CPU CLK lower lock 100MHz
+			s5pv310_cpufreq_lock(DVFS_LOCK_ID_SND, CPU_L16); // CPU CLK lower lock 100MHz
 		break;
 	case MCDRV_NOTIFY_MEDIA_PLAY_STOP:
 		s5pv310_cpufreq_lock_free(DVFS_LOCK_ID_SND);

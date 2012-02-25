@@ -2057,7 +2057,7 @@ int s5pv310_cpufreq_lock(unsigned int nId,
 		if (cpufreq_level != CPU_L0) {
 			cpufreq_level += 8;
 		}
-	}
+	} 
 
 	if (g_cpufreq_lock_id & (1 << nId)) {
 		printk(KERN_ERR
