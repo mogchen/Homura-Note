@@ -18,11 +18,11 @@
 */
 #ifdef CONFIG_S5PV310_HI_ARMCLK_THAN_1_2GHZ
 enum cpufreq_level_request{
-	CPU_L0,	/* 1.7GHz */
+	CPU_L0,	/* 1.704GHz */
 	CPU_L1,	/* 1.6GHz */
-	CPU_L2,	/* 1.5GHz */
+	CPU_L2,	/* 1.504GHz */
 	CPU_L3,	/* 1.4GHz */
-	CPU_L4,	/* 1.3GHz */
+	CPU_L4,	/* 1.304GHz */
 	CPU_L5,	/* 1.2GHz */
 	CPU_L6,	/* 1.1GHz */
 	CPU_L7,	/* 1.0GHz */
