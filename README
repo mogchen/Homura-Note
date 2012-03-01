@@ -1,14 +1,14 @@
-Homura-Note rev4
-やっぱりOC/UVしちゃった☆
+Homura-Note rev5
+S2カーネル遊びの片手間にやってるので、大目に見て…
 
 注意１：clock fixed at 100MHz while playing musicを入れていますが、lulzactiveの場合
 　　　それを無視するため、Lulzactive appでスクリーンオフ時に100MHz以上にセットして下さい。
 注意2：tegrakのCPU&GPUコントロールとノーマルのCPU&CPUコントロールを両方サポートしていますが
 　　　tegrakモジュールが走ると制御はTegrak側に移ります。（個人的にはTegrak Overclockでの制御が
-　　　お奨め☆
+　　　お奨め☆（と思ったが、CPUクロック値を最適化（脳内）したのでTegrak使わなくてもいいかも）
 
 1.CPU scaling level is changed from 6 to 18
-(1700/1600/1500/1400/1300/1200/1100/1000/900/800/700/600/500/400/300/200/100/50MHz)
+(1704/1600/1504/1400/1304/1200/1100/1000/900/800/700/600/500/400/300/200/100/50MHz)
 2.compatible with Tegrak Overclock (supports changing frequencies over 1000MHz)
 https://market.android.com/details?id=com.tegrak.overclock.ultimate
 3.supports CIFS
@@ -45,5 +45,9 @@ https://market.android.com/details?id=org.projectvoodoo.louder
 29.TweakGS2 Support(HW Sound Tweak & HW FakeDock）
 30.Optimized ARM RWSEM algorithm
 31.clock fixed at 100MHz while playing music
+32.bandwidth throttling
+33.VMAP_AREA_CACHE
+34.Improve memcpy
+35.remove sync workqueue
+36.VM_MAX_READAHEAD=1024kb
 
-まだ調整しきってないので、不具合は多めに見て・・・
