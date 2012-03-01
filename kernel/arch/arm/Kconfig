@@ -141,10 +141,10 @@ config GENERIC_LOCKBREAK
 
 config RWSEM_GENERIC_SPINLOCK
 	bool
+	default y
 
 config RWSEM_XCHGADD_ALGORITHM
 	bool
-	def_bool y
 
 config ARCH_HAS_ILOG2_U32
 	bool
@@ -1163,28 +1163,6 @@ config ARM_ERRATA_753970
 	  This has the same effect as the cache sync operation: store buffer
 	  drain and waiting for all buffers empty.
 
-config ARM_ERRATA_754322
-	bool "ARM errata: possible faulty MMU translations following an ASID switch"
-	depends on CPU_V7
-	help
-	  This option enables the workaround for the 754322 Cortex-A9 (r2p*,
-	  r3p*) erratum. A speculative memory access may cause a page table walk
-	  which starts prior to an ASID switch but completes afterwards. This
-	  can populate the micro-TLB with a stale entry which may be hit with
-	  the new ASID. This workaround places two dsb instructions in the mm
-	  switching code so that no page table walks can cross the ASID switch.
-
-config ARM_ERRATA_754327
-	bool "ARM errata: no automatic Store Buffer drain"
-	depends on CPU_V7 && SMP
-	help
-	  This option enables the workaround for the 754327 Cortex-A9 (prior to
-	  r2p0) erratum. The Store Buffer does not have any automatic draining
-	  mechanism and therefore a livelock may occur if an external agent
-	  continuously polls a memory location waiting to observe an update.
-	  This workaround defines cpu_relax() as smp_mb(), preventing correctly
-	  written polling loops from denying visibility of updates to memory.
-
 endmenu
 
 source "arch/arm/common/Kconfig"
@@ -1248,20 +1226,6 @@ source "drivers/pci/Kconfig"
 
 source "drivers/pcmcia/Kconfig"
 
-config ARM_ERRATA_764369
-	bool "ARM errata: Data cache line maintenance operation by MVA may not succeed"
-	depends on CPU_V7 && SMP
-	help
-	  This option enables the workaround for erratum 764369
-	  affecting Cortex-A9 MPCore with two or more processors (all
-	  current revisions). Under certain timing circumstances, a data
-	  cache line maintenance operation by MVA targeting an Inner
-	  Shareable memory region may fail to proceed up to either the
-	  Point of Coherency or to the Point of Unification of the
-	  system. This workaround adds a DSB instruction before the
-	  relevant cache maintenance functions and sets a specific bit
-	  in the diagnostic control register of the SCU.
-
 endmenu
 
 menu "Kernel Features"
@@ -1293,31 +1257,6 @@ config SMP
 	  <http://www.linuxdoc.org/docs.html#howto>.
 
 	  If you don't know what to do here, say N.
-
-config ARM_CPU_TOPOLOGY
-	bool "Support cpu topology definition"
-	depends on SMP && CPU_V7
-	default y
-	help
-	  Support ARM cpu topology definition. The MPIDR register defines
-	  affinity between processors which is then used to describe the cpu
-	  topology of an ARM System.
-
-config SCHED_MC
-	bool "Multi-core scheduler support"
-	depends on ARM_CPU_TOPOLOGY
-	help
-	  Multi-core scheduler support improves the CPU scheduler's decision
-	  making when dealing with multi-core CPU chips at a cost of slightly
-	  increased overhead in some places. If unsure say N here.
-
-config SCHED_SMT
-	bool "SMT scheduler support"
-	depends on ARM_CPU_TOPOLOGY
-	help
-	  Improves the CPU scheduler's decision making when dealing with
-	  MultiThreading at a cost of slightly increased overhead in some
-	  places. If unsure say N here.
 
 config HAVE_ARM_SCU
 	bool

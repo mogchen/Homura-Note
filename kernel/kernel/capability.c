@@ -162,7 +162,7 @@ SYSCALL_DEFINE2(capget, cap_user_header_t, header, cap_user_data_t, dataptr)
 {
 	int ret = 0;
 	pid_t pid;
-	unsigned tocopy = 0;
+	unsigned tocopy;
 	kernel_cap_t pE, pI, pP;
 
 	ret = cap_validate_magic(header, &tocopy);

@@ -80,7 +80,6 @@
 #include <mach/sec_debug.h>
 
 #include "sched_cpupri.h"
-#include "sched_autogroup.h"
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
@@ -271,10 +270,6 @@ struct task_group {
 	struct task_group *parent;
 	struct list_head siblings;
 	struct list_head children;
-
-#ifdef CONFIG_SCHED_AUTOGROUP
-	struct autogroup *autogroup;
-#endif
 };
 
 #define root_task_group init_task_group
@@ -304,7 +299,7 @@ static int root_task_group_empty(void)
  *  limitation from this.)
  */
 #define MIN_SHARES	2
-#define MAX_SHARES	(1UL << (18 + SCHED_LOAD_RESOLUTION))
+#define MAX_SHARES	(1UL << 18)
 
 static int init_task_group_load = INIT_TASK_GROUP_LOAD;
 #endif
@@ -617,40 +612,26 @@ static inline int cpu_of(struct rq *rq)
  * holds that lock for each task it moves into the cgroup. Therefore
  * by holding that lock, we pin the task to the current cgroup.
  */
-static inline struct task_group *cgroup_task_group(struct task_struct *p)
+static inline struct task_group *task_group(struct task_struct *p)
 {
-	struct task_group *tg;
 	struct cgroup_subsys_state *css;
 
 	css = task_subsys_state_check(p, cpu_cgroup_subsys_id,
 			lockdep_is_held(&task_rq(p)->lock));
-	tg = container_of(css, struct task_group, css);
-
-	return tg;
-}
-
-static inline struct task_group *task_group(struct task_struct *p)
-{
-	struct task_group *tg;
-
-	tg = cgroup_task_group(p);
-	return autogroup_task_group(p, tg);
+	return container_of(css, struct task_group, css);
 }
 
 /* Change a task's cfs_rq and parent entity if it moves across CPUs/groups */
 static inline void set_task_rq(struct task_struct *p, unsigned int cpu)
 {
-#if defined(CONFIG_FAIR_GROUP_SCHED) || defined(CONFIG_RT_GROUP_SCHED)
-	struct task_group *tg = task_group(p);
-#endif
 #ifdef CONFIG_FAIR_GROUP_SCHED
-	p->se.cfs_rq = tg->cfs_rq[cpu];
-	p->se.parent = tg->se[cpu];
+	p->se.cfs_rq = task_group(p)->cfs_rq[cpu];
+	p->se.parent = task_group(p)->se[cpu];
 #endif
 
 #ifdef CONFIG_RT_GROUP_SCHED
-	p->rt.rt_rq  = tg->rt_rq[cpu];
-	p->rt.parent = tg->rt_se[cpu];
+	p->rt.rt_rq  = task_group(p)->rt_rq[cpu];
+	p->rt.parent = task_group(p)->rt_se[cpu];
 #endif
 }
 
@@ -1339,26 +1320,15 @@ calc_delta_mine(unsigned long delta_exec, unsigned long weight,
 {
 	u64 tmp;
 
-	/*
-	 * weight can be less than 2^SCHED_LOAD_RESOLUTION for task group sched
-	 * entities since MIN_SHARES = 2. Treat weight as 1 if less than
-	 * 2^SCHED_LOAD_RESOLUTION.
-	 */
-	if (likely(weight > (1UL << SCHED_LOAD_RESOLUTION)))
-		tmp = (u64)delta_exec * scale_load_down(weight);
-	else
-		tmp = (u64)delta_exec;	
-	
 	if (!lw->inv_weight) {
-		unsigned long w = scale_load_down(lw->weight);
-		if (BITS_PER_LONG > 32 && unlikely(w >= WMULT_CONST))
+		if (BITS_PER_LONG > 32 && unlikely(lw->weight >= WMULT_CONST))
 			lw->inv_weight = 1;
-		else if (unlikely(!w))
-			lw->inv_weight = WMULT_CONST;
 		else
-			lw->inv_weight = WMULT_CONST / w;
+			lw->inv_weight = 1 + (WMULT_CONST-lw->weight/2)
+				/ (lw->weight+1);
 	}
 
+	tmp = (u64)delta_exec * weight;
 	/*
 	 * Check whether we'd overflow the 64-bit multiplication:
 	 */
@@ -1886,20 +1856,17 @@ static void dec_nr_running(struct rq *rq)
 
 static void set_load_weight(struct task_struct *p)
 {
-	int prio = p->static_prio - MAX_RT_PRIO;
-	struct load_weight *load = &p->se.load;
-
 	/*
 	 * SCHED_IDLE tasks get minimal weight:
 	 */
 	if (p->policy == SCHED_IDLE) {
-		load->weight = scale_load(WEIGHT_IDLEPRIO);
-		load->inv_weight = WMULT_IDLEPRIO;
+		p->se.load.weight = WEIGHT_IDLEPRIO;
+		p->se.load.inv_weight = WMULT_IDLEPRIO;
 		return;
 	}
 
-	load->weight = scale_load(prio_to_weight[prio]);
-	load->inv_weight = prio_to_wmult[prio];
+	p->se.load.weight = prio_to_weight[p->static_prio - MAX_RT_PRIO];
+	p->se.load.inv_weight = prio_to_wmult[p->static_prio - MAX_RT_PRIO];
 }
 
 static void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
@@ -1945,7 +1912,6 @@ static void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
 #include "sched_idletask.c"
 #include "sched_fair.c"
 #include "sched_rt.c"
-#include "sched_autogroup.c"
 #ifdef CONFIG_SCHED_DEBUG
 # include "sched_debug.c"
 #endif
@@ -5944,9 +5910,6 @@ migration_call(struct notifier_block *nfb, unsigned long action, void *hcpu)
 		break;
 #endif
 	}
-
-	update_max_interval();
-
 	return NOTIFY_OK;
 }
 
@@ -6081,7 +6044,7 @@ static int sched_domain_debug_one(struct sched_domain *sd, int cpu, int level,
 		cpulist_scnprintf(str, sizeof(str), sched_group_cpus(group));
 
 		printk(KERN_CONT " %s", str);
-		if (group->cpu_power != SCHED_POWER_SCALE) {
+		if (group->cpu_power != SCHED_LOAD_SCALE) {
 			printk(KERN_CONT " (cpu_power = %d)",
 				group->cpu_power);
 		}
@@ -7463,7 +7426,7 @@ int __init sched_create_sysfs_power_savings_entries(struct sysdev_class *cls)
  * disabled, cpuset_update_active_cpus() becomes a simple wrapper
  * around partition_sched_domains().
  */
-static int /*__cpuexit*/ cpuset_cpu_active(struct notifier_block *nfb,
+static int __cpuexit cpuset_cpu_active(struct notifier_block *nfb,
 				       unsigned long action, void *hcpu)
 {
 	switch (action & ~CPU_TASKS_FROZEN) {
@@ -7476,7 +7439,7 @@ static int /*__cpuexit*/ cpuset_cpu_active(struct notifier_block *nfb,
 	}
 }
 
-static int /*__cpuexit*/ cpuset_cpu_inactive(struct notifier_block *nfb,
+static int __cpuexit cpuset_cpu_inactive(struct notifier_block *nfb,
 					 unsigned long action, void *hcpu)
 {
 	switch (action & ~CPU_TASKS_FROZEN) {
@@ -7727,7 +7690,7 @@ void __init sched_init(void)
 #ifdef CONFIG_CGROUP_SCHED
 	list_add(&init_task_group.list, &task_groups);
 	INIT_LIST_HEAD(&init_task_group.children);
-	autogroup_init(&init_task);
+
 #endif /* CONFIG_CGROUP_SCHED */
 
 #if defined CONFIG_FAIR_GROUP_SCHED && defined CONFIG_SMP
@@ -7787,7 +7750,7 @@ void __init sched_init(void)
 #ifdef CONFIG_SMP
 		rq->sd = NULL;
 		rq->rd = NULL;
-		rq->cpu_power = SCHED_POWER_SCALE;
+		rq->cpu_power = SCHED_LOAD_SCALE;
 		rq->post_schedule = 0;
 		rq->active_balance = 0;
 		rq->next_balance = jiffies;
@@ -8765,14 +8728,14 @@ cpu_cgroup_attach(struct cgroup_subsys *ss, struct cgroup *cgrp,
 static int cpu_shares_write_u64(struct cgroup *cgrp, struct cftype *cftype,
 				u64 shareval)
 {
-	return sched_group_set_shares(cgroup_tg(cgrp), scale_load(shareval));
+	return sched_group_set_shares(cgroup_tg(cgrp), shareval);
 }
 
 static u64 cpu_shares_read_u64(struct cgroup *cgrp, struct cftype *cft)
 {
 	struct task_group *tg = cgroup_tg(cgrp);
 
-	return (u64) scale_load_down(tg->shares);
+	return (u64) tg->shares;
 }
 #endif /* CONFIG_FAIR_GROUP_SCHED */
 

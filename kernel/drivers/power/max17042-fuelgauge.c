@@ -456,7 +456,7 @@ static void max17042_get_version(struct i2c_client *client)
 
 static int max17042_set_property(struct power_supply *psy,
 			    enum power_supply_property psp,
-			    const union power_supply_propval *val)
+			    union power_supply_propval *val)
 {
 	struct max17042_chip *chip = container_of(psy,
 						  struct max17042_chip,
@@ -509,7 +509,7 @@ static void max17042_work(struct work_struct *work)
 			dev_info(&chip->client->dev,
 				"fuel alert already activated (raw:%d)\n",
 				chip->raw_soc);
-	} else if (chip->raw_soc >= chip->fuel_alert_soc) {
+	} else if (chip->raw_soc == chip->fuel_alert_soc) {
 		if(chip->is_fuel_alerted) {
 			wake_unlock(&chip->fuel_alert_wake_lock);
 			chip->is_fuel_alerted = false;

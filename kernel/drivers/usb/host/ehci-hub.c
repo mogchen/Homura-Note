@@ -106,7 +106,6 @@ static void ehci_handover_companion_ports(struct ehci_hcd *ehci)
 	ehci->owned_ports = 0;
 }
 
-#if 0
 static void ehci_adjust_port_wakeup_flags(struct ehci_hcd *ehci,
 		bool suspending)
 {
@@ -169,7 +168,6 @@ static void ehci_adjust_port_wakeup_flags(struct ehci_hcd *ehci,
 		}
 	}
 }
-#endif
 
 static int ehci_bus_suspend (struct usb_hcd *hcd)
 {
