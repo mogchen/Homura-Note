@@ -829,6 +829,8 @@ static void do_smooth_freq(struct work_struct *work)
 	}
 }
 
+static DECLARE_DELAYED_WORK(smooth_freq_work, do_smooth_freq);
+
 static int s5pv310_target(struct cpufreq_policy *policy,
 		unsigned int target_freq,
 		unsigned int relation)
