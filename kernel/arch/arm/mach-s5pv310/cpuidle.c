@@ -941,8 +941,9 @@ static int s5pv310_enter_core0_lpa(struct cpuidle_device *dev,
 	int idle_time;
 	unsigned long tmp;
 
-	pr_info("++%s\n", __func__);
+	
 #ifdef AFTR_DEBUG
+	pr_info("++%s\n", __func__);
 	/* ON */
 	gpio_set_value(S5PV310_GPX1(6), 0);
 	gpio_set_value(S5PV310_GPX1(7), 0);
